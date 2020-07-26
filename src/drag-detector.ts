@@ -21,11 +21,10 @@ export class DragDetector {
     }
 
     stopListening() {
-        this.canvasEl.addEventListener('pointerdown', this.onPointerDown);
-        this.canvasEl.addEventListener('pointermove', this.onPointerMove);
-        this.canvasEl.addEventListener('pointerup', this.onPointerUp);
-        this.canvasEl.addEventListener('pointercancel', this.onPointerUp);
-        this.canvasEl.addEventListener('pointercancel', () => 'cancel!');
+        this.canvasEl.removeEventListener('pointerdown', this.onPointerDown);
+        this.canvasEl.removeEventListener('pointermove', this.onPointerMove);
+        this.canvasEl.removeEventListener('pointerup', this.onPointerUp);
+        this.canvasEl.removeEventListener('pointercancel', this.onPointerUp);
     }
 
     private onPointerDown = (e: PointerEvent) => {
