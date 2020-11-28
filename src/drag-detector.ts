@@ -1,16 +1,16 @@
-import { Point } from './point';
+import { Point, Vec2 } from "@wjheesen/glib";
 
 export class DragDetector {
 
     private dragging = false;
-    private dragPosition= <Point> null;
+    private dragPosition= <Point.PointLike> {};
 
     constructor(
         private canvasEl: HTMLCanvasElement
     ) {}
 
-    getDragPosition(): Point|null {
-        return this.dragPosition;
+    getDragPosition(): Point.PointLike|null {
+        return this.dragging ? this.dragPosition : null;
     }
 
     startListening() {
@@ -34,19 +34,12 @@ export class DragDetector {
     private onPointerMove = (e: PointerEvent) => {
         if (this.dragging) {
             e.preventDefault();
-            this.dragPosition = this.measureDragPosition(e);
+            this.dragPosition.x = e.clientX - this.canvasEl.offsetLeft;
+            this.dragPosition.y = e.clientY - this.canvasEl.offsetTop;
         }
     }
   
     private onPointerUp = (e: PointerEvent) => {
         this.dragging = false;
-        this.dragPosition = null;
-    }
-
-    private measureDragPosition(e: PointerEvent) {
-        return new Point(
-            e.clientX - this.canvasEl.offsetLeft,
-            e.clientY - this.canvasEl.offsetTop,
-        ); 
     }
 }

@@ -12,5 +12,8 @@
         "build": "webpack"
     },
     "author": "",
-    "license": "ISC"
+    "license": "ISC",
+    "dependencies": {
+        "@wjheesen/glib": "^1.0.5"
+    }
 }

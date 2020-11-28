@@ -1,22 +1,21 @@
+import { Rect } from "@wjheesen/glib";
 import { GameObject, Game } from "./game";
-import { Rect } from "./rect";
 
 export class Room implements GameObject {
 
     constructor(
-        public readonly bounds: Rect,
+        public readonly bounds: Rect.RectLike,
     ) {}
 
     get width() {
-        return this.bounds.width;
+        return Rect.width(this.bounds);
     }
 
     get height() {
-        return this.bounds.height;
+        return Rect.height(this.bounds);
     }
 
     onGameTick({ctx}: Game) {
-        let { left, top, width, height } = this.bounds;
-        ctx.clearRect(left, top, width, height);
+        ctx.clearRect(this.bounds.bottom, this.bounds.left, this.width, this.height);
     }
 }

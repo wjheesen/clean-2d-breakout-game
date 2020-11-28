@@ -1,23 +1,22 @@
 import { Brick } from "./brick";
 import { GameObject, Game } from "./game";
-import { Rect } from "./rect";
 import { Room } from "./room";
 import { Paddle } from "./paddle";
+import { Point, Rect, Vec2 } from "@wjheesen/glib";
 
 export class Ball implements GameObject {
 
-    private target = new Rect(
-        this.x + this.dx - this.radius, 
-        this.y + this.dy - this.radius, 
-        this.radius * 2, this.radius * 2
+    private target = Rect.dimensions(
+        this.center.x + this.velocity.x - this.radius,
+        this.center.y + this.velocity.y + this.radius,
+        this.radius * 2,
+        this.radius * 2
     );
 
     constructor(
-        private x: number, 
-        private y: number,
+        private center: Point.PointLike,
         private radius: number,
-        private dx: number,
-        private dy: number,
+        private velocity: Vec2.Vec2Like,
     ) {}
 
     onGameTick(game: Game) {
@@ -27,51 +26,51 @@ export class Ball implements GameObject {
 
     private show({ctx}: Game) {
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+        ctx.arc(this.center.x, this.center.y, this.radius, 0, Math.PI*2);
         ctx.fillStyle = "#0095DD";
         ctx.fill();
         ctx.closePath();
     }
 
     private move() {
-        this.x += this.dx;
-        this.y += this.dy;
-        this.target.offset(this.dx, this.dy);
+        Vec2.add(this.velocity, this.center, this.center);
+        Rect.offset(this.target, this.velocity, this.target);
+        console.log(this.velocity, this.center);
     }
 
     collidesWithWall({bounds}: Room) {
-        return !bounds.containsX(this.target.left) || !bounds.containsX(this.target.right);
+        return !Rect.containsX(bounds, this.target.left) || !Rect.containsX(bounds, this.target.right);
     }
 
     collidesWithCeiling({bounds}: Room) {
-        return !bounds.containsY(this.target.top);
+        return !Rect.containsY(bounds, this.target.bottom);
     }
     
     collidesWithFloor({bounds}: Room) {
-        return !bounds.containsY(this.target.bottom);
+        return !Rect.containsY(bounds, this.target.top);
     }
 
     collidesWithPaddle({bounds}: Paddle) {
-        return bounds.overlapsRect(this.target);
+        return Rect.intersects(bounds, this.target);
     }
  
     collidesWithBrick(brick: Brick) {
-        return brick.isIntact && brick.bounds.overlapsRect(this.target);
+        return brick.isIntact && Rect.intersects(brick.bounds, this.target);
     }
 
     bounceAgainstWall(room: Room) {
-        this.dx = -this.dx;
+        this.velocity.x = -this.velocity.x;
     }
 
     bounceAgainstCeiling(room: Room) {
-        this.dy = -this.dy;
+        this.velocity.y = -this.velocity.y;
     }
 
     bounceAgainstPaddle(paddle: Paddle) {
-        this.dy = -this.dy;
+        this.velocity.y = -this.velocity.y;
     }
 
     bounceAgainstBrick(brick: Brick) {
-        this.dy =- this.dy;
+        this.velocity.y =- this.velocity.y;
     }
 }

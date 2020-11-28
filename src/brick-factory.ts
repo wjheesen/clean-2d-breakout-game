@@ -1,5 +1,4 @@
 import { Brick } from "./brick";
-import { Rect } from "./rect";
 
 export interface BrickSpecification {
     padding: number;
@@ -24,7 +23,7 @@ export class BrickFactory {
 
     newBrick(col: number, row: number, {padding, width, height, offsetLeft, offsetTop}: BrickSpecification ) {
         let left = col * (width + padding) + offsetLeft;
-        let top = row * (height + padding) + offsetTop;
-        return new Brick(new Rect(left, top, width, height));
+        let bottom = row * (height + padding) + offsetTop;
+        return new Brick({left: left, top: bottom + height, right: left + width, bottom: bottom});
     }
 }

@@ -36,6 +36,7 @@ export class BallCollisionHandler {
 
     private handleCollisionWithWall({ball, room}: Game) {
         if (ball.collidesWithWall(room)) {
+            console.log('wall collision', ball, room.bounds);
             ball.bounceAgainstWall(room);
             return true;
         }

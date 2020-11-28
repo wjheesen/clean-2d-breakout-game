@@ -1,10 +1,10 @@
+import { Rect, Vec2 } from "@wjheesen/glib";
 import { Game, GameObject } from "./game";
-import { Rect } from "./rect";
 
 export class Paddle implements GameObject {
 
     constructor(
-        public readonly bounds: Rect,
+        public readonly bounds: Rect.RectLike,
         private speed: number,
     ) {}
 
@@ -16,9 +16,8 @@ export class Paddle implements GameObject {
     } 
 
     private show({ctx}: Game) {
-        let {left, top, width, height } = this.bounds;
         ctx.beginPath();
-        ctx.rect(left, top, width, height);
+        ctx.rect(this.bounds.left, this.bounds.bottom, Rect.width(this.bounds), Rect.height(this.bounds));
         ctx.fillStyle = "#0095DD";
         ctx.fill();
         ctx.closePath();
@@ -26,20 +25,24 @@ export class Paddle implements GameObject {
 
     private handleLeftKeyPress({room, keyListener}: Game) {
         if (keyListener.leftKeyPressed) {
-            this.bounds.left = Math.max(room.bounds.left, this.bounds.left - this.speed); 
+            this.move(Vec2.boundX(-this.speed, this.bounds.left, room.bounds));
         }
     }
         
     private handleRightKeyPress({room, keyListener}: Game) {
         if (keyListener.rightKeyPressed) {
-            this.bounds.right = Math.min(room.bounds.right, this.bounds.right + this.speed);
+            this.move(Vec2.boundX(this.speed, this.bounds.right, room.bounds));
         }
+    }
+
+    private move(dx: number) {
+        Rect.offsetX(this.bounds, dx, this.bounds);
     }
 
     private handleDragging({room, dragDetector}: Game) {
         let drag = dragDetector.getDragPosition()
-        if (drag && room.bounds.containsX(drag.x)) {
-            this.bounds.centerX = drag.x;
+        if (drag && Rect.containsX(room.bounds, drag.x)) {
+            Rect.offsetX(this.bounds, drag.x - Rect.centerX(this.bounds), this.bounds);
         }
     }
 }

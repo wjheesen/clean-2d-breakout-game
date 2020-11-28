@@ -1,5 +1,5 @@
+import { Rect } from "@wjheesen/glib";
 import { GameObject, Game } from "./game";
-import { Rect } from "./rect";
 
 export enum BrickStatus {
     INTACT,
@@ -11,7 +11,7 @@ export class Brick implements GameObject {
     private status = BrickStatus.INTACT
 
     constructor(
-        public readonly bounds: Rect,
+        public readonly bounds: Rect.RectLike,
     ) {}
 
     get isIntact() {
@@ -29,9 +29,8 @@ export class Brick implements GameObject {
     }
 
     private show({ctx}: Game) {
-        let { left, top, width, height } = this.bounds;
         ctx.beginPath();
-        ctx.rect(left, top, width, height);
+        ctx.rect(this.bounds.left, this.bounds.bottom, Rect.width(this.bounds), Rect.height(this.bounds));
         ctx.fillStyle = "#0095DD";
         ctx.fill();
         ctx.closePath();

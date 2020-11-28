@@ -1,3 +1,4 @@
+import { Rect } from "@wjheesen/glib";
 import { Ball } from "./ball";
 import { BallCollisionHandler } from "./ball-collision-handler";
 import { BrickFactory } from "./brick-factory";
@@ -5,7 +6,6 @@ import { DragDetector } from "./drag-detector";
 import { Game } from "./game";
 import { GameKeyListener } from "./game-key-listener";
 import { Paddle } from "./paddle";
-import { Rect } from "./rect";
 import { Room } from "./room";
 import { Score } from "./score";
 
@@ -27,8 +27,7 @@ export class GameFactory {
 
     private newRoom() {
         let { width, height } = this.canvasEl;
-        let room = new Room(new Rect(0, 0, width, height));
-        return room;
+        return new Room({left: 0, top: height, right: width, bottom: 0});
     }
 
     private newScore() {
@@ -36,15 +35,15 @@ export class GameFactory {
     }
 
     private newBall(room: Room) {
-        return new Ball(room.width / 2, room.height - 30, 10, 2, -2);
+        return new Ball({x : room.width / 2, y: room.height - 30}, 10, {x: 2, y: -2});
     }
 
     private newPaddle(room: Room) {
         let paddleWidth = 75;
         let paddleHeight = 10;
         let left = (room.width - paddleWidth) / 2;
-        let top = room.height - paddleHeight;
-        let rect = new Rect(left, top, paddleWidth, paddleHeight);
+        let top = room.height;
+        let rect = Rect.dimensions(left, top, paddleWidth, paddleHeight);
         let speed = 7;
         return new Paddle(rect, speed);
     }
